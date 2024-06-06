@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
+const postController = require("../controllers/postController");
 
-router.post("/posts");
-router.get("/posts/:slug");
-router.get("/posts");
-router.put("/posts/:slug");
-router.delete("/posts/:slug");
+router.post("/", postController.store);
+router.get("/:slug");
+router.get("/");
+router.put("/:slug");
+router.delete("/:slug");
 
 module.exports = router;
 
