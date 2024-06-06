@@ -3,7 +3,7 @@ const router = express.Router();
 const postController = require("../controllers/postController");
 
 router.post("/", postController.store);
-router.get("/:slug");
+router.get("/:slug", postController.show);
 router.get("/");
 router.put("/:slug");
 router.delete("/:slug");

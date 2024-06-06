@@ -30,7 +30,6 @@ const store = async (req, res, next) => {
   };
 
   try {
-    console.log(data);
     const post = await prisma.post.create({ data });
     res.status(200).json({
       message: "Post created successfully",
@@ -41,6 +40,27 @@ const store = async (req, res, next) => {
   }
 };
 
+const show = async (req, res, next) => {
+  const { slug } = req.params;
+
+  try {
+    const post = await prisma.post.findUnique({ where: { slug: slug } });
+
+    if (post) {
+      res.status(200).json({
+        message: "Post found",
+        post,
+      });
+    } else {
+      return next(new CustomError("Post not found", 404));
+    }
+  } catch (e) {
+    console.log(e);
+    return next(new CustomError(e, 500));
+  }
+};
+
 module.exports = {
   store,
+  show,
 };
