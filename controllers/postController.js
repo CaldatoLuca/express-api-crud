@@ -95,8 +95,51 @@ const index = async (req, res, next) => {
   }
 };
 
+const update = async (req, res, next) => {
+  const { slug } = req.params;
+  const { title, content, image, published } = req.body;
+
+  if (typeof title !== "string") {
+    return next(new CustomError("Title must be a string", 400));
+  }
+  if (typeof content !== "string") {
+    return next(new CustomError("Content must be a string", 400));
+  }
+  if (typeof image !== "string") {
+    return next(new CustomError("Image must be a string", 400));
+  }
+  if (typeof published !== "boolean") {
+    return next(new CustomError("Published must be a boolean", 400));
+  }
+
+  const newSlug = await uniqueSlug(title);
+
+  const data = {
+    title,
+    slug: newSlug,
+    content,
+    image,
+    published,
+  };
+
+  try {
+    const post = await prisma.post.update({
+      where: { slug: slug },
+      data,
+    });
+
+    res.status(200).json({
+      message: "Post updated successfully",
+      post,
+    });
+  } catch (e) {
+    return next(new CustomError(e.message, 500));
+  }
+};
+
 module.exports = {
   store,
   show,
   index,
+  update,
 };
