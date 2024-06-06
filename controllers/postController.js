@@ -60,7 +60,7 @@ const show = async (req, res, next) => {
 };
 
 const index = async (req, res, next) => {
-  const { published, filterString } = req.query;
+  const { published, filterString, page = 1, limit = 5 } = req.query;
   const where = {};
 
   if (published === "true") {
@@ -83,12 +83,26 @@ const index = async (req, res, next) => {
     ];
   }
 
+  const offset = (page - 1) * limit;
+  const totalItems = await prisma.post.count({ where });
+  const totalPages = Math.ceil(totalItems / limit);
+
+  if (page > totalPages) {
+    return next(new CustomError("La pagina richiesta non esiste.", 400));
+  }
+
   try {
-    const posts = await prisma.post.findMany({ where });
+    const posts = await prisma.post.findMany({
+      where,
+      take: parseInt(limit),
+      skip: parseInt(offset),
+    });
     res.status(200).json({
       message: `${posts.length} Posts found`,
+      page: page,
+      totalItems: `${posts.length}`,
+      totalPages,
       posts,
-      where,
     });
   } catch (e) {
     return next(new CustomError(e.message, 500));
