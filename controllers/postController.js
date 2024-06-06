@@ -59,7 +59,44 @@ const show = async (req, res, next) => {
   }
 };
 
+const index = async (req, res, next) => {
+  const { published, filterString } = req.query;
+  const where = {};
+
+  if (published === "true") {
+    where.published = true;
+  } else if (published === "false") {
+    where.published = false;
+  }
+  if (filterString) {
+    where.OR = [
+      {
+        title: {
+          contains: filterString,
+        },
+      },
+      {
+        content: {
+          contains: filterString,
+        },
+      },
+    ];
+  }
+
+  try {
+    const posts = await prisma.post.findMany({ where });
+    res.status(200).json({
+      message: `${posts.length} Posts found`,
+      posts,
+      where,
+    });
+  } catch (e) {
+    return next(new CustomError(e.message, 500));
+  }
+};
+
 module.exports = {
   store,
   show,
+  index,
 };

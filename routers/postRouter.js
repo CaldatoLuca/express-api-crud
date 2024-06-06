@@ -4,7 +4,7 @@ const postController = require("../controllers/postController");
 
 router.post("/", postController.store);
 router.get("/:slug", postController.show);
-router.get("/");
+router.get("/", postController.index);
 router.put("/:slug");
 router.delete("/:slug");
 
