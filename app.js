@@ -3,6 +3,7 @@ const app = express();
 const morgan = require("morgan");
 const notFound = require("./middlewares/notFound");
 const errorHandler = require("./middlewares/errorHandler");
+const postRouter = require("./routers/postRouter");
 
 require("dotenv").config();
 const { PORT } = process.env;
@@ -14,6 +15,7 @@ app.use(morgan("dev"));
 app.get("/", (req, res) => {
   res.send("Home Page");
 });
+app.use("/posts", postRouter);
 
 app.use(notFound);
 app.use(errorHandler);
