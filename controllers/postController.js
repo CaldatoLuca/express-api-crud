@@ -36,7 +36,7 @@ const store = async (req, res, next) => {
       post,
     });
   } catch (e) {
-    return next(new CustomError(e, 500));
+    return next(new CustomError(e.message, 500));
   }
 };
 
@@ -55,8 +55,7 @@ const show = async (req, res, next) => {
       return next(new CustomError("Post not found", 404));
     }
   } catch (e) {
-    console.log(e);
-    return next(new CustomError(e, 500));
+    return next(new CustomError(e.message, 500));
   }
 };
 
